@@ -1,5 +1,6 @@
 defmodule BrainstrapWeb.Router do
   use BrainstrapWeb, :router
+  import Oban.Web.Router
 
   import BrainstrapWeb.UserAuth
 
@@ -21,6 +22,7 @@ defmodule BrainstrapWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    oban_dashboard("/oban")
   end
 
   # Other scopes may use custom stacks.
@@ -57,6 +59,7 @@ defmodule BrainstrapWeb.Router do
     end
 
     post "/users/update-password", UserSessionController, :update_password
+    resources "/trails", TrailController
   end
 
   scope "/", BrainstrapWeb do

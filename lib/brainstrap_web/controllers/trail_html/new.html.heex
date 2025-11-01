@@ -1,0 +1,8 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <.header>
+    New Trail
+    <:subtitle>Use this form to manage trail records in your database.</:subtitle>
+  </.header>
+
+  <.trail_form changeset={@changeset} action={~p"/trails"} return_to={~p"/trails"} />
+</Layouts.app>

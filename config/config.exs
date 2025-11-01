@@ -8,6 +8,19 @@
 import Config
 
 config :brainstrap, :scopes,
+  accounts_user: [
+    default: false,
+    module: Brainstrap.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:user, :id],
+    schema_key: :user_id,
+    schema_type: :binary_id,
+    schema_table: :users,
+    test_data_fixture: Brainstrap.AccountsFixtures,
+    test_setup_helper: :register_and_log_in_user
+  ]
+
+config :brainstrap, :scopes,
   user: [
     default: true,
     module: Brainstrap.Accounts.Scope,
@@ -43,6 +56,11 @@ config :brainstrap, BrainstrapWeb.Endpoint,
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :brainstrap, Brainstrap.Mailer, adapter: Swoosh.Adapters.Local
+
+config :brainstrap, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 10],
+  repo: Brainstrap.Repo
 
 # Configure esbuild (the version is required)
 config :esbuild,

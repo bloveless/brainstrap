@@ -1,0 +1,39 @@
+.trailmap.container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.trailmap h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.trailmap #trailMap {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.trailmap .trail-point {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trailmap .trail-point:hover circle {
+    r: 18;
+    fill: #ff6b6b;
+}
+
+.trailmap .trail-point:hover text {
+    font-weight: bold;
+}
+
+.trailmap .trail-path {
+    fill: none;
+    stroke: #4a90e2;
+    stroke-width: 3;
+    stroke-linecap: round;
+    opacity: 0.7;
+}

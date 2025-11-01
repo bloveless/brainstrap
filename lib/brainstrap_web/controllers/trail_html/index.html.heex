@@ -1,0 +1,26 @@
+<Layouts.app flash={@flash} current_scope={@current_scope}>
+  <.header>
+    Listing Trails
+    <:actions>
+      <.button href={~p"/trails/new"}>
+        <.icon name="hero-plus" /> New Trail
+      </.button>
+    </:actions>
+  </.header>
+
+  <.table id="trails" rows={@trails} row_click={&JS.navigate(~p"/trails/#{&1}")}>
+    <:col :let={trail} label="Name">{trail.name}</:col>
+    <:col :let={trail} label="Description">{trail.description}</:col>
+    <:action :let={trail}>
+      <div class="sr-only">
+        <.link navigate={~p"/trails/#{trail}"}>Show</.link>
+      </div>
+      <.link navigate={~p"/trails/#{trail}/edit"}>Edit</.link>
+    </:action>
+    <:action :let={trail}>
+      <.link href={~p"/trails/#{trail}"} method="delete" data-confirm="Are you sure?">
+        Delete
+      </.link>
+    </:action>
+  </.table>
+</Layouts.app>

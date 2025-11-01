@@ -10,6 +10,7 @@ defmodule Brainstrap.Application do
     children = [
       BrainstrapWeb.Telemetry,
       Brainstrap.Repo,
+      {Oban, Application.fetch_env!(:brainstrap, Oban)},
       {DNSCluster, query: Application.get_env(:brainstrap, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Brainstrap.PubSub},
       # Start a worker by calling: Brainstrap.Worker.start_link(arg)

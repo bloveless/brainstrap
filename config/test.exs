@@ -1,7 +1,7 @@
 import Config
 
 # Only in tests, remove the complexity from the password hashing algorithm
-config :bcrypt_elixir, :log_rounds, 1
+config :argon2_elixir, t_cost: 1, m_cost: 8
 
 # Configure your database
 #
@@ -38,3 +38,5 @@ config :phoenix, :plug_init_mode, :runtime
 # Enable helpful, but potentially expensive runtime checks
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
+
+config :brainstrap, Oban, testing: :manual

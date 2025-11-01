@@ -1,0 +1,147 @@
+defmodule Brainstrap.Learning do
+  @moduledoc """
+  The Learning context.
+  """
+
+  import Ecto.Query, warn: false
+  alias Brainstrap.Repo
+
+  alias Brainstrap.Learning.Trail
+  alias Brainstrap.Accounts.Scope
+
+  @doc """
+  Subscribes to scoped notifications about any trail changes.
+
+  The broadcasted messages match the pattern:
+
+    * {:created, %Trail{}}
+    * {:updated, %Trail{}}
+    * {:deleted, %Trail{}}
+
+  """
+  def subscribe_trails(%Scope{} = scope) do
+    key = scope.user.id
+
+    Phoenix.PubSub.subscribe(Brainstrap.PubSub, "user:#{key}:trails")
+  end
+
+  defp broadcast_trail(%Scope{} = scope, message) do
+    key = scope.user.id
+
+    Phoenix.PubSub.broadcast(Brainstrap.PubSub, "user:#{key}:trails", message)
+  end
+
+  @doc """
+  Returns the list of trails.
+
+  ## Examples
+
+      iex> list_trails(scope)
+      [%Trail{}, ...]
+
+  """
+  def list_trails(%Scope{} = scope) do
+    Repo.all_by(Trail, user_id: scope.user.id)
+  end
+
+  @doc """
+  Gets a single trail.
+
+  Raises `Ecto.NoResultsError` if the Trail does not exist.
+
+  ## Examples
+
+      iex> get_trail!(scope, 123)
+      %Trail{}
+
+      iex> get_trail!(scope, 456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_trail!(%Scope{} = scope, id) do
+    Repo.get_by!(Trail, id: id, user_id: scope.user.id)
+  end
+
+  @doc """
+  Creates a trail.
+
+  ## Examples
+
+      iex> create_trail(scope, %{field: value})
+      {:ok, %Trail{}}
+
+      iex> create_trail(scope, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_trail(%Scope{} = scope, attrs) do
+    with {:ok, trail = %Trail{}} <-
+           %Trail{}
+           |> Trail.changeset(attrs, scope)
+           |> Repo.insert() do
+      broadcast_trail(scope, {:created, trail})
+      {:ok, trail}
+    end
+  end
+
+  @doc """
+  Updates a trail.
+
+  ## Examples
+
+      iex> update_trail(scope, trail, %{field: new_value})
+      {:ok, %Trail{}}
+
+      iex> update_trail(scope, trail, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_trail(%Scope{} = scope, %Trail{} = trail, attrs) do
+    true = trail.user_id == scope.user.id
+
+    with {:ok, trail = %Trail{}} <-
+           trail
+           |> Trail.changeset(attrs, scope)
+           |> Repo.update() do
+      broadcast_trail(scope, {:updated, trail})
+      {:ok, trail}
+    end
+  end
+
+  @doc """
+  Deletes a trail.
+
+  ## Examples
+
+      iex> delete_trail(scope, trail)
+      {:ok, %Trail{}}
+
+      iex> delete_trail(scope, trail)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_trail(%Scope{} = scope, %Trail{} = trail) do
+    true = trail.user_id == scope.user.id
+
+    with {:ok, trail = %Trail{}} <-
+           Repo.delete(trail) do
+      broadcast_trail(scope, {:deleted, trail})
+      {:ok, trail}
+    end
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking trail changes.
+
+  ## Examples
+
+      iex> change_trail(scope, trail)
+      %Ecto.Changeset{data: %Trail{}}
+
+  """
+  def change_trail(%Scope{} = scope, %Trail{} = trail, attrs \\ %{}) do
+    true = trail.user_id == scope.user.id
+
+    Trail.changeset(trail, attrs, scope)
+  end
+end
