@@ -7,6 +7,7 @@ defmodule Brainstrap.Learning do
   alias Brainstrap.Repo
 
   alias Brainstrap.Learning.Trail
+  alias Brainstrap.Learning.LessonPlan
   alias Brainstrap.Accounts.Scope
 
   @doc """
@@ -143,5 +144,66 @@ defmodule Brainstrap.Learning do
     true = trail.user_id == scope.user.id
 
     Trail.changeset(trail, attrs, scope)
+  end
+
+  @doc """
+  Gets the lesson plan for a trail.
+
+  Returns `nil` if the lesson plan does not exist yet.
+
+  ## Examples
+
+      iex> get_lesson_plan_by_trail(scope, trail_id)
+      %LessonPlan{}
+
+      iex> get_lesson_plan_by_trail(scope, trail_id)
+      nil
+
+  """
+  def get_lesson_plan_by_trail(%Scope{} = scope, trail_id) do
+    # Verify the trail belongs to the user
+    trail = get_trail!(scope, trail_id)
+
+    Repo.one(
+      from lp in LessonPlan,
+        where: lp.trail_id == ^trail.id,
+        preload: [
+          sections: [
+            :checkpoint,
+            lessons: :resources
+          ]
+        ]
+    )
+  end
+
+  @doc """
+  Gets a lesson plan by ID with all nested associations preloaded.
+
+  Raises `Ecto.NoResultsError` if the lesson plan does not exist or doesn't belong to the user.
+
+  ## Examples
+
+      iex> get_lesson_plan!(scope, lesson_plan_id)
+      %LessonPlan{}
+
+  """
+  def get_lesson_plan!(%Scope{} = scope, lesson_plan_id) do
+    lesson_plan =
+      Repo.one!(
+        from lp in LessonPlan,
+          where: lp.id == ^lesson_plan_id,
+          preload: [
+            :trail,
+            sections: [
+              :checkpoint,
+              lessons: :resources
+            ]
+          ]
+      )
+
+    # Verify the trail belongs to the user
+    true = lesson_plan.trail.user_id == scope.user.id
+
+    lesson_plan
   end
 end

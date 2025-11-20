@@ -69,8 +69,7 @@ defmodule Brainstrap.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:oban, "~> 2.19"},
-      {:oban_web, "~> 2.11"},
-      {:zoi, "~> 0.8"}
+      {:oban_web, "~> 2.11"}
     ]
   end
 

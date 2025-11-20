@@ -2,11 +2,11 @@ defmodule BrainstrapWeb.TrailLiveTest do
   use BrainstrapWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Brainstrap.TrailsFixtures
+  import Brainstrap.LearningFixtures
 
-  @create_attrs %{name: "some name"}
-  @update_attrs %{name: "some updated name"}
-  @invalid_attrs %{name: nil}
+  @create_attrs %{name: "some name", description: "some description"}
+  @update_attrs %{name: "some updated name", description: "some updated description"}
+  @invalid_attrs %{name: nil, description: nil}
 
   setup :register_and_log_in_user
 

@@ -1,11 +1,11 @@
 defmodule Brainstrap.LLM do
-  def enhance_prompt(title, description) do
+  def enhance_prompt(name, description) do
     ReqLLM.generate_object(
       Brainstrap.LLM.EnhancePrompt.model(),
       ReqLLM.Context.new([
         ReqLLM.Context.system(Brainstrap.LLM.EnhancePrompt.system_prompt()),
         ReqLLM.Context.user(
-          "The user has requested to learn \"#{title}\" they provided the additional description \"#{description}\""
+          "The user has requested to learn \"#{name}\" they provided the additional description \"#{description}\""
         )
       ]),
       Brainstrap.LLM.EnhancePrompt.schema(),

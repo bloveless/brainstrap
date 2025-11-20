@@ -56,10 +56,14 @@ defmodule BrainstrapWeb.Router do
       on_mount: [{BrainstrapWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+
+      live "/trails", TrailLive.Index, :index
+      live "/trails/new", TrailLive.Form, :new
+      live "/trails/:id", TrailLive.Show, :show
+      live "/trails/:id/edit", TrailLive.Form, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password
-    resources "/trails", TrailController
   end
 
   scope "/", BrainstrapWeb do
