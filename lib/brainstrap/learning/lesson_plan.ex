@@ -39,7 +39,7 @@ defmodule Brainstrap.Learning.LessonPlan.Section do
   @foreign_key_type :binary_id
   schema "lesson_plan_sections" do
     field :description, :string
-    field :position, :integer
+    field :order, :integer
 
     belongs_to :lesson_plan, LessonPlan
 
@@ -52,7 +52,7 @@ defmodule Brainstrap.Learning.LessonPlan.Section do
   @doc false
   def changeset(section, attrs) do
     section
-    |> cast(attrs, [:lesson_plan_id, :description, :position])
+    |> cast(attrs, [:lesson_plan_id, :description, :order])
     |> validate_required([:description])
     |> cast_assoc(:lessons, required: true)
     |> cast_assoc(:checkpoint, required: true)
@@ -70,7 +70,7 @@ defmodule Brainstrap.Learning.LessonPlan.Lesson do
   schema "lesson_plan_lessons" do
     field :title, :string
     field :description, :string
-    field :number, :integer
+    field :order, :integer
 
     belongs_to :section, Section
 
@@ -82,8 +82,8 @@ defmodule Brainstrap.Learning.LessonPlan.Lesson do
   @doc false
   def changeset(lesson, attrs) do
     lesson
-    |> cast(attrs, [:section_id, :title, :description, :number])
-    |> validate_required([:title, :description, :number])
+    |> cast(attrs, [:section_id, :title, :description, :order])
+    |> validate_required([:title, :description, :order])
     |> cast_assoc(:resources, required: true)
   end
 end

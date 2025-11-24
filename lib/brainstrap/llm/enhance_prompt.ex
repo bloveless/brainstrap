@@ -1,11 +1,12 @@
 defmodule Brainstrap.LLM.EnhancePrompt do
   def model() do
-    "openrouter:google/gemini-2.5-flash-lite:online"
+    "google/gemini-2.5-flash-lite"
+    # "x-ai/grok-4.1-fast"
+    # "openai/gpt-5-nano"
+    # "minimax/minimax-m2"
   end
 
-  def model_options() do
-    [max_tokens: 10_000]
-  end
+  def model_options(), do: [max_output_tokens: 5000]
 
   def system_prompt() do
     """
@@ -27,11 +28,9 @@ defmodule Brainstrap.LLM.EnhancePrompt do
     your response. Keep the name short and succinct without losing the intent of the user original prompt. The
     description should also be succinct but add some extra context to the users query without losing the original ask.
     Do not format the name or the description as markdown. Do not include any links in either the name or the
-    description.
-
-    ## Your response
-    Your response will be parsed by a program and not a user. Do not include anything other than properly formatted JSON
-    that can be parsed by a program.
+    description. Attempt to make the response at least four sentences. Remember that your output will be input to
+    another LLM call. So if adding some extra context would make the content more valuable to a later LLM call then do
+    so.
     """
   end
 

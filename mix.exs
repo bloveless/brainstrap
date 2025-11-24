@@ -61,7 +61,6 @@ defmodule Brainstrap.MixProject do
        depth: 1},
       {:swoosh, "~> 1.16"},
       {:req, "~> 0.5"},
-      {:req_llm, "~> 1.0.0-rc.8"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.26"},
@@ -69,7 +68,8 @@ defmodule Brainstrap.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:oban, "~> 2.19"},
-      {:oban_web, "~> 2.11"}
+      {:oban_web, "~> 2.11"},
+      {:dotenvy, "~> 1.0"}
     ]
   end
 

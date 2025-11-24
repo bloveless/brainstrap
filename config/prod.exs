@@ -1,4 +1,5 @@
 import Config
+import Brainstrap.Workers.GenerateLessonPlan
 
 # Note we also include the path to a cache manifest
 # containing the digested version of static files. This
@@ -16,6 +17,12 @@ config :swoosh, local: false
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :brainstrap, Oban,
+  workers: [
+    # Override the max_attempts
+    GenerateLessonPlan: [max_attempts: 3]
+  ]
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

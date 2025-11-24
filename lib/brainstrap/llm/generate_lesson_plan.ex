@@ -1,10 +1,18 @@
-defmodule Brainstrap.LLM.LessonPlan do
+defmodule Brainstrap.LLM.GenerateLessonPlan do
   def model() do
-    "openrouter:google/gemini-2.5-pro:online"
+    # "openai/gpt-5.1"
+    "google/gemini-2.5-pro"
+    # "google/gemini-3-pro-preview"
+    # "x-ai/grok-4.1-fast"
   end
 
   def model_options() do
-    [max_tokens: 20_000]
+    [
+      max_output_tokens: 50_000,
+      tools: [Brainstrap.LLM.YouTubeSearch.tool_definition()],
+      reasoning: true,
+      max_web_results: 10
+    ]
   end
 
   def system_prompt() do
@@ -27,49 +35,6 @@ defmodule Brainstrap.LLM.LessonPlan do
     Feel free to use your internal knowledge to prioritize the resources you find from most simple to most complicated
     and put together a learning plan for your student. DO NOT UNDER ANY CIRCUMSTANCE USE YOUR INTERNAL KNOWLEDGE TO
     SUGGEST LEARNING MATERIALS. Only use real resources that you found online and only suggest real websites and videos.
-
-    ## Your response
-    Your response will be parsed by a program and not a user. Do not include anything other than properly formatted JSON
-    that can be parsed by a program.
-
-    ```
-    {
-      "description": "<insert overall description of the learning plan here>",
-      "prerequisites": [
-        "<insert a list of any prerequisites that the learner might need to before starting this lesson plan>",
-        ...
-      ]
-      "sections": [
-        {
-          "description": "<the description of what the user will be expected to learn within this section>",
-          "lessons": [
-            {
-              "title": "<a short description of the lesson>",
-              "description": "<the description of the lesson>",
-              "number": "<the number of the lesson>",
-              "resources": [
-                {
-                  "title": "<the title of the resource in reference>",
-                  "description": "<a longer description of the resource suggested>",
-                  "type": "<may be something like course, video, blog, book>",
-                  "url": "<the URL of the learning resource>"
-                },
-                ... insert as many resources as are necessary to complete the lesson
-              ]
-            },
-            ... insert as many other lessons as are necessary to complete this section
-          ],
-          "checkpoint": {
-            "title": "<the short title of the checkpoint and goals suggested for the user",
-            "description": "<the description of the checkpoint suggested for the user for this lesson",
-            "tasks": [
-              "<a list of tasks that the user should accomplish in order to continue past this lesson>",
-            ]
-          }
-        ]
-      }
-    }
-    ```
     """
   end
 

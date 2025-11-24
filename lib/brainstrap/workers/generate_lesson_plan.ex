@@ -1,5 +1,5 @@
 defmodule Brainstrap.Workers.GenerateLessonPlan do
-  use Oban.Worker, queue: :default, max_attempts: 3
+  use Oban.Worker, queue: :default, max_attempts: 1
 
   alias Brainstrap.Repo
   alias Brainstrap.Learning
@@ -7,17 +7,11 @@ defmodule Brainstrap.Workers.GenerateLessonPlan do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"trail_id" => trail_id}}) do
-    # Fetch the trail
     trail = Repo.get!(Learning.Trail, trail_id)
 
-    # Generate the lesson plan using LLM
     case Brainstrap.LLM.generate_lesson_plan(trail.name, trail.description) do
       {:ok, response} ->
-        # Parse the LLM response
-        lesson_plan_data = ReqLLM.Response.object(response)
-
-        # Create the lesson plan with all nested data
-        case create_lesson_plan(trail, lesson_plan_data) do
+        case create_lesson_plan(trail, response) do
           {:ok, _lesson_plan} ->
             :ok
 
@@ -31,7 +25,6 @@ defmodule Brainstrap.Workers.GenerateLessonPlan do
   end
 
   defp create_lesson_plan(trail, data) do
-    # Build the lesson plan attrs with all nested associations
     attrs = %{
       trail_id: trail.id,
       description: data["description"],
@@ -49,7 +42,7 @@ defmodule Brainstrap.Workers.GenerateLessonPlan do
     |> Enum.map(fn {section, index} ->
       %{
         description: section["description"],
-        position: index,
+        order: index,
         lessons: build_lessons(section["lessons"] || []),
         checkpoint: build_checkpoint(section["checkpoint"])
       }
@@ -62,7 +55,7 @@ defmodule Brainstrap.Workers.GenerateLessonPlan do
       %{
         title: lesson["title"],
         description: lesson["description"],
-        number: index,
+        order: index,
         resources: build_resources(lesson["resources"] || [])
       }
     end)

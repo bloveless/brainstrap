@@ -1,4 +1,11 @@
 import Config
+import Dotenvy
+
+source!(".env")
+
+# OpenRouter API key configuration
+config :brainstrap, :openrouter_api_key, env!("OPENROUTER_API_KEY", :string!)
+config :brainstrap, :youtube_api_key, env!("YOUTUBE_API_KEY", :string!)
 
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the

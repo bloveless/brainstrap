@@ -75,33 +75,19 @@ defmodule BrainstrapWeb.TrailLive.Form do
   end
 
   def handle_event("enhance", _params, socket) do
-    # Get current changeset from the form (includes unsaved changes)
     changeset = socket.assigns.form.source
-    dbg(changeset)
-
-    # Get current field values (including any unsaved edits)
     current_name = Ecto.Changeset.get_field(changeset, :name)
     current_description = Ecto.Changeset.get_field(changeset, :description)
-    dbg(current_name)
-    dbg(current_description)
 
     {:ok, resp} =
       Brainstrap.LLM.enhance_prompt(current_name, current_description)
 
-    obj = ReqLLM.Response.object(resp)
-
-    # Create a new changeset with the enhanced values
     enhanced_changeset =
       Learning.change_trail(
         socket.assigns.current_scope,
         socket.assigns.trail,
-        %{"name" => obj["name"], "description" => obj["description"]}
+        %{"name" => resp["name"], "description" => resp["description"]}
       )
-
-    enhanced_name = Ecto.Changeset.get_field(enhanced_changeset, :name)
-    enhanced_description = Ecto.Changeset.get_field(enhanced_changeset, :description)
-    dbg(enhanced_name)
-    dbg(enhanced_description)
 
     {:noreply, assign(socket, form: to_form(enhanced_changeset))}
   end
@@ -109,7 +95,6 @@ defmodule BrainstrapWeb.TrailLive.Form do
   defp save_trail(socket, :edit, trail_params) do
     case Learning.update_trail(socket.assigns.current_scope, socket.assigns.trail, trail_params) do
       {:ok, trail} ->
-        # Enqueue job to generate lesson plan
         %{trail_id: trail.id}
         |> GenerateLessonPlan.new()
         |> Oban.insert()
@@ -129,7 +114,6 @@ defmodule BrainstrapWeb.TrailLive.Form do
   defp save_trail(socket, :new, trail_params) do
     case Learning.create_trail(socket.assigns.current_scope, trail_params) do
       {:ok, trail} ->
-        # Enqueue job to generate lesson plan
         %{trail_id: trail.id}
         |> GenerateLessonPlan.new()
         |> Oban.insert()
