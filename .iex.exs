@@ -1,3 +1,5 @@
+alias Brainstrap.Repo
+
 defmodule Scripts do
   def enhance_prompt_test() do
     {:ok, resp} =
@@ -7,7 +9,6 @@ defmodule Scripts do
       phoenix framework"
       )
 
-    IO.inspect(ReqLLM.Response.text(resp))
     resp
   end
 
@@ -23,9 +24,6 @@ defmodule Scripts do
       prior experience in Elixir or Phoenix."
       )
 
-    IO.inspect(ReqLLM.Response.usage(resp))
-    IO.inspect(ReqLLM.Response.thinking(resp))
-    IO.inspect(ReqLLM.Response.text(resp))
     resp
   end
 
@@ -37,8 +35,6 @@ defmodule Scripts do
       phoenix framework"
       )
 
-    IO.inspect(ReqLLM.Response.thinking(resp))
-    IO.inspect(ReqLLM.Response.text(resp))
     resp
   end
 end

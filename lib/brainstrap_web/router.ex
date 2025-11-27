@@ -45,6 +45,16 @@ defmodule BrainstrapWeb.Router do
       live_dashboard "/dashboard", metrics: BrainstrapWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+
+    scope "/dev", BrainstrapWeb do
+      pipe_through :browser
+
+      live_session :dev_interactions,
+        on_mount: [{BrainstrapWeb.UserAuth, :mount_current_scope}] do
+        live "/interactions", InteractionLive.Index, :index
+        live "/interactions/:id", InteractionLive.Show, :show
+      end
+    end
   end
 
   ## Authentication routes
