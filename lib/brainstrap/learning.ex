@@ -147,6 +147,43 @@ defmodule Brainstrap.Learning do
   end
 
   @doc """
+  Marks a trail as having generation requested.
+
+  Returns `{:ok, trail}` if successfully marked, or `{:error, :already_requested}`
+  if generation was already requested for this trail.
+
+  ## Examples
+
+      iex> request_generation(scope, trail)
+      {:ok, %Trail{}}
+
+      iex> request_generation(scope, trail_already_requested)
+      {:error, :already_requested}
+
+  """
+  def request_generation(%Scope{} = scope, %Trail{} = trail) do
+    true = trail.user_id == scope.user.id
+
+    if trail.generation_requested_at do
+      {:error, :already_requested}
+    else
+      trail
+      |> Ecto.Changeset.change(
+        generation_requested_at: DateTime.utc_now() |> DateTime.truncate(:second)
+      )
+      |> Repo.update()
+      |> case do
+        {:ok, updated_trail} ->
+          broadcast_trail(scope, {:updated, updated_trail})
+          {:ok, updated_trail}
+
+        error ->
+          error
+      end
+    end
+  end
+
+  @doc """
   Gets the lesson plan for a trail.
 
   Returns `nil` if the lesson plan does not exist yet.
@@ -168,6 +205,7 @@ defmodule Brainstrap.Learning do
       from lp in LessonPlan,
         where: lp.trail_id == ^trail.id,
         preload: [
+          :trail,
           sections: [
             :checkpoint,
             lessons: :resources

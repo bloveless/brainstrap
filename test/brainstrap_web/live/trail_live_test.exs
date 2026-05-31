@@ -26,7 +26,7 @@ defmodule BrainstrapWeb.TrailLiveTest do
       assert html =~ trail.name
     end
 
-    test "saves new trail", %{conn: conn} do
+    test "saves new trail and stays on edit page", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/trails")
 
       assert {:ok, form_live, _} =
@@ -41,14 +41,15 @@ defmodule BrainstrapWeb.TrailLiveTest do
              |> form("#trail-form", trail: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
-      assert {:ok, index_live, _html} =
+      assert {:ok, edit_live, _html} =
                form_live
                |> form("#trail-form", trail: @create_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/trails")
+               |> follow_redirect(conn)
 
-      html = render(index_live)
+      html = render(edit_live)
       assert html =~ "Trail created successfully"
+      assert html =~ "Edit Trail"
       assert html =~ "some name"
     end
 

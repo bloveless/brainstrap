@@ -3,7 +3,6 @@ defmodule BrainstrapWeb.TrailLive.Form do
 
   alias Brainstrap.Learning
   alias Brainstrap.Learning.Trail
-  alias Brainstrap.Workers.GenerateLessonPlan
 
   @impl true
   def render(assigns) do
@@ -22,8 +21,27 @@ defmodule BrainstrapWeb.TrailLive.Form do
             <.button phx-disable-with="Saving..." variant="primary">Save Trail</.button>
             <.button navigate={return_path(@current_scope, @return_to, @trail)}>Cancel</.button>
           </div>
-          <div class="flex-none">
-            <.button phx-disable-with="Enhancing..." phx-click="enhance" variant="secondary">
+          <div class="flex-none group relative">
+            <.button
+              :if={@live_action == :new}
+              disabled
+              variant="secondary"
+              class="opacity-50 cursor-not-allowed"
+            >
+              Enhance
+            </.button>
+            <div
+              :if={@live_action == :new}
+              class="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-zinc-800 text-white text-sm rounded whitespace-nowrap"
+            >
+              Save the trail first to enable enhancement
+            </div>
+            <.button
+              :if={@live_action == :edit}
+              phx-disable-with="Enhancing..."
+              phx-click="enhance"
+              variant="secondary"
+            >
               Enhance
             </.button>
           </div>
@@ -79,8 +97,7 @@ defmodule BrainstrapWeb.TrailLive.Form do
     current_name = Ecto.Changeset.get_field(changeset, :name)
     current_description = Ecto.Changeset.get_field(changeset, :description)
 
-    {:ok, resp} =
-      Brainstrap.LLM.enhance_prompt(current_name, current_description)
+    {:ok, resp} = Brainstrap.LLM.enhance_prompt(current_name, current_description)
 
     enhanced_changeset =
       Learning.change_trail(
@@ -95,10 +112,6 @@ defmodule BrainstrapWeb.TrailLive.Form do
   defp save_trail(socket, :edit, trail_params) do
     case Learning.update_trail(socket.assigns.current_scope, socket.assigns.trail, trail_params) do
       {:ok, trail} ->
-        %{trail_id: trail.id}
-        |> GenerateLessonPlan.new()
-        |> Oban.insert()
-
         {:noreply,
          socket
          |> put_flash(:info, "Trail updated successfully")
@@ -114,16 +127,10 @@ defmodule BrainstrapWeb.TrailLive.Form do
   defp save_trail(socket, :new, trail_params) do
     case Learning.create_trail(socket.assigns.current_scope, trail_params) do
       {:ok, trail} ->
-        %{trail_id: trail.id}
-        |> GenerateLessonPlan.new()
-        |> Oban.insert()
-
         {:noreply,
          socket
-         |> put_flash(:info, "Trail created successfully")
-         |> push_navigate(
-           to: return_path(socket.assigns.current_scope, socket.assigns.return_to, trail)
-         )}
+         |> put_flash(:info, "Trail created successfully. You can now enhance it if you'd like.")
+         |> push_navigate(to: ~p"/trails/#{trail}/edit?return_to=show")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

@@ -1,0 +1,531 @@
+/* Blueprint-style lesson plan display */
+
+.blueprint {
+  --blueprint-bg: #1a3a5c;
+  --blueprint-grid: rgba(100, 180, 255, 0.1);
+  --blueprint-line: rgba(100, 180, 255, 0.4);
+  --blueprint-accent: #64b5f6;
+  --blueprint-highlight: #81d4fa;
+  --blueprint-text: #e3f2fd;
+  --blueprint-muted: rgba(227, 242, 253, 0.7);
+  --blueprint-card-bg: rgba(30, 60, 90, 0.6);
+  --blueprint-card-border: rgba(100, 180, 255, 0.3);
+  --blueprint-success: #81c784;
+  --blueprint-checkpoint: #ffb74d;
+
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--blueprint-bg);
+  background-image:
+    linear-gradient(var(--blueprint-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.blueprint::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at top left, rgba(100, 180, 255, 0.15), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(100, 180, 255, 0.1), transparent 50%);
+  pointer-events: none;
+}
+
+/* Header */
+.blueprint-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px dashed var(--blueprint-line);
+}
+
+.blueprint-header .btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--blueprint-accent);
+  border-color: var(--blueprint-line);
+}
+
+.blueprint-header .btn:hover {
+  background-color: rgba(100, 180, 255, 0.1);
+}
+
+.blueprint-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--blueprint-text);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 20px rgba(100, 180, 255, 0.3);
+}
+
+.blueprint-subtitle {
+  font-size: 0.875rem;
+  color: var(--blueprint-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Description cards */
+.blueprint-description {
+  position: relative;
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+  .blueprint-description {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.blueprint-card {
+  position: relative;
+  background: var(--blueprint-card-bg);
+  border: 1px solid var(--blueprint-card-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  backdrop-filter: blur(4px);
+}
+
+.blueprint-card::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px dashed var(--blueprint-line);
+  border-radius: 0.625rem;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.blueprint-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--blueprint-accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+}
+
+.blueprint-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.blueprint-icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+.blueprint-card-content {
+  color: var(--blueprint-text);
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+.blueprint-prerequisites {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.blueprint-prerequisites li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: var(--blueprint-text);
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.blueprint-prerequisites li::before {
+  content: "▹";
+  position: absolute;
+  left: 0;
+  color: var(--blueprint-accent);
+}
+
+/* Timeline */
+.blueprint-timeline {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.blueprint-timeline-line {
+  position: absolute;
+  left: 1.25rem;
+  top: 0;
+  bottom: 3rem;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--blueprint-accent),
+    var(--blueprint-line) 90%,
+    transparent
+  );
+}
+
+/* Section */
+.blueprint-section {
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.blueprint-section-connector {
+  position: absolute;
+  left: -3rem;
+  top: 0;
+}
+
+.blueprint-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--blueprint-bg);
+  border: 2px solid var(--blueprint-accent);
+  box-shadow:
+    0 0 0 4px var(--blueprint-bg),
+    0 0 15px rgba(100, 180, 255, 0.4);
+}
+
+.blueprint-node-section {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.blueprint-node-number {
+  font-weight: 700;
+  color: var(--blueprint-accent);
+  font-size: 1rem;
+}
+
+.blueprint-section-content {
+  position: relative;
+}
+
+.blueprint-section-header {
+  background: var(--blueprint-card-bg);
+  border: 1px solid var(--blueprint-card-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.blueprint-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--blueprint-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.blueprint-section-description {
+  color: var(--blueprint-text);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Lessons */
+.blueprint-lessons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-left: 1rem;
+}
+
+.blueprint-lesson {
+  display: flex;
+  gap: 1rem;
+}
+
+.blueprint-lesson-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.blueprint-node-lesson {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--blueprint-highlight);
+  border-color: var(--blueprint-line);
+  box-shadow:
+    0 0 0 3px var(--blueprint-bg),
+    0 0 10px rgba(100, 180, 255, 0.2);
+}
+
+.blueprint-lesson-line {
+  flex: 1;
+  width: 1px;
+  background: var(--blueprint-line);
+  margin-top: 0.5rem;
+  min-height: 1rem;
+}
+
+.blueprint-lesson-card {
+  flex: 1;
+  background: var(--blueprint-card-bg);
+  border: 1px solid var(--blueprint-card-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.blueprint-lesson-card:hover {
+  border-color: var(--blueprint-accent);
+  box-shadow: 0 0 20px rgba(100, 180, 255, 0.15);
+}
+
+.blueprint-lesson-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--blueprint-text);
+  margin-bottom: 0.5rem;
+}
+
+.blueprint-lesson-description {
+  font-size: 0.875rem;
+  color: var(--blueprint-muted);
+  line-height: 1.5;
+}
+
+/* Resources */
+.blueprint-resources {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--blueprint-line);
+}
+
+.blueprint-resources-header {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--blueprint-accent);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+
+.blueprint-resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.blueprint-resource-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(100, 180, 255, 0.05);
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.blueprint-resource-item:hover {
+  background: rgba(100, 180, 255, 0.1);
+  border-color: var(--blueprint-line);
+}
+
+.blueprint-resource-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--blueprint-accent);
+  flex-shrink: 0;
+}
+
+.blueprint-resource-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.blueprint-resource-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.blueprint-resource-title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--blueprint-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.blueprint-resource-type {
+  font-size: 0.6875rem;
+  color: var(--blueprint-muted);
+  text-transform: capitalize;
+}
+
+.blueprint-resource-arrow {
+  width: 1rem;
+  height: 1rem;
+  color: var(--blueprint-muted);
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.blueprint-resource-item:hover .blueprint-resource-arrow {
+  opacity: 1;
+}
+
+/* Checkpoint */
+.blueprint-checkpoint {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+}
+
+.blueprint-checkpoint-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.blueprint-node-checkpoint {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-color: var(--blueprint-checkpoint);
+  box-shadow:
+    0 0 0 3px var(--blueprint-bg),
+    0 0 15px rgba(255, 183, 77, 0.3);
+}
+
+.blueprint-node-checkpoint svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--blueprint-checkpoint);
+}
+
+.blueprint-checkpoint-card {
+  flex: 1;
+  background: rgba(255, 183, 77, 0.08);
+  border: 1px solid rgba(255, 183, 77, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.blueprint-checkpoint-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--blueprint-checkpoint);
+  margin-bottom: 0.375rem;
+}
+
+.blueprint-checkpoint-description {
+  font-size: 0.8125rem;
+  color: var(--blueprint-muted);
+  line-height: 1.5;
+}
+
+/* Tasks */
+.blueprint-tasks {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(255, 183, 77, 0.3);
+}
+
+.blueprint-tasks-header {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--blueprint-checkpoint);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.blueprint-task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.blueprint-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--blueprint-text);
+}
+
+.blueprint-task-checkbox {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 1.5px solid var(--blueprint-checkpoint);
+  border-radius: 0.1875rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+/* Finish marker */
+.blueprint-finish {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: -1.75rem;
+}
+
+.blueprint-node-finish {
+  width: 3rem;
+  height: 3rem;
+  border-color: var(--blueprint-success);
+  background: linear-gradient(135deg, var(--blueprint-bg), rgba(129, 199, 132, 0.1));
+  box-shadow:
+    0 0 0 4px var(--blueprint-bg),
+    0 0 20px rgba(129, 199, 132, 0.4);
+}
+
+.blueprint-node-finish svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--blueprint-success);
+}
+
+.blueprint-finish-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--blueprint-success);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

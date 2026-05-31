@@ -9,6 +9,7 @@ defmodule Brainstrap.Learning.Trail do
   schema "trails" do
     field :name, :string
     field :description, :string
+    field :generation_requested_at, :utc_datetime
     field :user_id, :binary_id
 
     has_one :lesson_plan, LessonPlan

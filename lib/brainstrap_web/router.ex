@@ -71,6 +71,7 @@ defmodule BrainstrapWeb.Router do
       live "/trails/new", TrailLive.Form, :new
       live "/trails/:id", TrailLive.Show, :show
       live "/trails/:id/edit", TrailLive.Form, :edit
+      live "/trails/:id/lesson-plan", LessonPlanLive.Show, :show
     end
 
     post "/users/update-password", UserSessionController, :update_password
